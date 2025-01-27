@@ -30,7 +30,11 @@ var sendCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("This PC is a sender to: %s\n", args[0])
 
-		conn, err := net.Dial("tcp", args[0]+":34567")
+		conn, err := net.DialUDP("udp", nil, &net.UDPAddr{
+			IP:   net.ParseIP(args[0]),
+			Port: 34567,
+			Zone: "",
+		})
 		if err != nil {
 			fmt.Printf("Error occurred when setting up connection: %s", err.Error())
 			os.Exit(1)

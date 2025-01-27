@@ -17,25 +17,22 @@ var receiveCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("This PC is a receiver")
 
-		listener, err := net.Listen("tcp", ":34567")
+		conn, err := net.ListenUDP("udp", &net.UDPAddr{
+			IP:   net.IPv4(0, 0, 0, 0),
+			Port: 34567,
+			Zone: "",
+		})
 
 		if err != nil {
 			fmt.Printf("Error occurred when setting up listener: %s", err.Error())
 			os.Exit(1)
 		}
 
-		defer listener.Close()
+		defer conn.Close()
+
 		fmt.Println("Listening on port 34567")
 
-		conn, err := listener.Accept()
-		if err != nil {
-			fmt.Printf("Error occurred when accepting connection: %s", err.Error())
-			os.Exit(1)
-		}
-
-		defer conn.Close()
 		buffer := make([]byte, 1024)
-
 		for {
 			n, err := conn.Read(buffer)
 
