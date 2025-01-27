@@ -16,7 +16,7 @@ var sendCmd = &cobra.Command{
 			return err
 		}
 
-		var ip = args[0]
+		ip := args[0]
 
 		if match, _ := regexp.MatchString("^[1-9]{1,3}\\.[1-9]{1,3}\\.[1-9]{1,3}\\.[1-9]{1,3}$", ip); match {
 			return nil
