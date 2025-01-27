@@ -1,6 +1,6 @@
 package main
 
-import "Contest/cmd"
+import "github.com/linusop/contest/cmd"
 
 func main() {
 	cmd.Execute()

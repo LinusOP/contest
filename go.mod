@@ -1,4 +1,4 @@
-module Contest
+module github.com/linusop/contest
 
 go 1.23.5
 
