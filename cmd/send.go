@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"regexp"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -19,13 +18,11 @@ var sendCmd = &cobra.Command{
 			return err
 		}
 
-		ip := args[0]
-
-		if match, _ := regexp.MatchString("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$", ip); match {
+		if ip := net.ParseIP(args[0]); ip == nil {
 			return nil
 		}
 
-		return fmt.Errorf("supplied IP %s is not a valid IP", ip)
+		return fmt.Errorf("supplied IP %s is not a valid IP", args[0])
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("This PC is a sender to: %s\n", args[0])
@@ -42,8 +39,8 @@ var sendCmd = &cobra.Command{
 
 		defer conn.Close()
 
-		fmt.Println("Sending initial HELLO")
-		data := []byte("HELLO")
+		fmt.Println("Sending sync")
+		data := []byte("SYNC")
 		_, err = conn.Write(data)
 
 		if err != nil {

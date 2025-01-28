@@ -33,12 +33,14 @@ var receiveCmd = &cobra.Command{
 		fmt.Println("Listening on port 34567")
 
 		buffer := make([]byte, 1024)
+		var startTime int64
+
 		for {
 			n, err := conn.Read(buffer)
 
 			if err != nil {
 				if err == io.EOF {
-					fmt.Println("Received EOF")
+					fmt.Println("Received EOF, exiting")
 					os.Exit(0)
 				} else {
 					fmt.Printf("Error occurred when reading data: %s", err.Error())
@@ -46,7 +48,18 @@ var receiveCmd = &cobra.Command{
 				}
 			}
 
-			fmt.Printf("Received %s at %d\n", buffer[:n], time.Now().Local().UnixMilli()/100)
+			if string(buffer[:n]) == "SYNC" {
+				startTime = time.Now().Local().UnixMilli()
+				fmt.Println("\nReceived SYNC, resetting time to 0.0s")
+			} else {
+				if startTime == 0 {
+					fmt.Println("No SYNC received, exiting. Did you start sender before receiver?")
+					os.Exit(1)
+				}
+
+				fmt.Printf("Received %s at %.1fs\n", buffer[:n], float64(time.Now().Local().UnixMilli()-startTime)/1000)
+			}
+
 		}
 	},
 }
