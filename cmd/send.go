@@ -19,10 +19,10 @@ var sendCmd = &cobra.Command{
 		}
 
 		if ip := net.ParseIP(args[0]); ip == nil {
-			return nil
+			return fmt.Errorf("supplied IP %s is not a valid IP", args[0])
 		}
 
-		return fmt.Errorf("supplied IP %s is not a valid IP", args[0])
+		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("This PC is a sender to: %s\n", args[0])
