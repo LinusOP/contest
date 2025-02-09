@@ -39,22 +39,15 @@ var sendCmd = &cobra.Command{
 
 		defer conn.Close()
 
-		fmt.Println("Sending sync")
-		data := []byte("SYNC")
-		_, err = conn.Write(data)
+		// fmt.Println("Sending sync")
+		// data := []byte("SYNC")
+		// _, err = conn.Write(data)
 
-		if err != nil {
-			fmt.Printf("Error occurred when writing data: %s", err.Error())
-			os.Exit(1)
-		}
+		// if err != nil {
+		// 	fmt.Printf("Error occurred when writing data: %s", err.Error())
+		// 	os.Exit(1)
+		// }
 
-		fmt.Println("Starting continous ping in")
-		fmt.Println("3")
-		time.Sleep(1 * time.Second)
-		fmt.Println("2")
-		time.Sleep(1 * time.Second)
-		fmt.Println("1")
-		time.Sleep(1 * time.Second)
 		fmt.Println("Starting continous ping")
 
 		for {
@@ -66,7 +59,7 @@ var sendCmd = &cobra.Command{
 				os.Exit(1)
 			}
 
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(10 * time.Millisecond)
 		}
 	},
 }

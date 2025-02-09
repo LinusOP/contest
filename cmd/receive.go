@@ -33,7 +33,8 @@ var receiveCmd = &cobra.Command{
 		fmt.Println("Listening on port 34567")
 
 		buffer := make([]byte, 1024)
-		var startTime int64
+		var lastTime int64
+		var gapCount int64
 
 		for {
 			n, err := conn.Read(buffer)
@@ -48,18 +49,50 @@ var receiveCmd = &cobra.Command{
 				}
 			}
 
-			if string(buffer[:n]) == "SYNC" {
-				startTime = time.Now().Local().UnixMilli()
-				fmt.Println("\nReceived SYNC, resetting time to 0.0s")
-			} else {
-				if startTime == 0 {
-					fmt.Println("No SYNC received, exiting. Did you start sender before receiver?")
-					os.Exit(1)
+			if string(buffer[:n]) == "PING" {
+				var currentTime = time.Now().Local().UnixMilli()
+				// For first PING
+				if lastTime == 0 {
+					lastTime = currentTime
+					fmt.Println("Received first PING")
 				}
 
-				fmt.Printf("Received %s at %.1fs\n", buffer[:n], float64(time.Now().Local().UnixMilli()-startTime)/1000)
+				if currentTime-lastTime > 20 {
+					gapCount++
+					fmt.Printf("\nGap nr %d was: %.2fs\n", gapCount, float64(currentTime-lastTime)/1000)
+				}
+
+				lastTime = currentTime
+			} else {
+				fmt.Printf("Didn't receive PING, received %s. Something is very wrong, exiting.", buffer[:n])
+				os.Exit(1)
 			}
 
+			// if string(buffer[:n]) == "SYNC" {
+			// 	startTime = time.Now().Local().UnixMilli()
+			// 	lastTime = startTime
+			// 	fmt.Println("\nReceived SYNC, resetting time to 0.0s")
+			// } else {
+			// 	if startTime == 0 {
+			// 		fmt.Println("No SYNC received, exiting. Did you start sender before receiver?")
+			// 		os.Exit(1)
+			// 	}
+
+			// 	// fmt.Printf("Received %s at %.2fs\n", buffer[:n], float64(time.Now().Local().UnixMilli()-startTime)/1000)
+
+			// 	if string(buffer[:n]) == "PING" {
+			// 		var currentTime = time.Now().Local().UnixMilli()
+
+			// 		if currentTime-lastTime > 50 {
+			// 			fmt.Printf("\nDetected gap, gap was: %.2fs\n", float64(currentTime-lastTime)/1000)
+			// 		}
+
+			// 		lastTime = currentTime
+			// 	} else {
+			// 		fmt.Printf("Didn't receive PING, received %s. Something is very wrong, exiting.", buffer[:n])
+			// 		os.Exit(1)
+			// 	}
+			// }
 		}
 	},
 }
