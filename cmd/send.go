@@ -59,7 +59,7 @@ var sendCmd = &cobra.Command{
 				os.Exit(1)
 			}
 
-			time.Sleep(10 * time.Millisecond)
+			time.Sleep(100 * time.Millisecond)
 		}
 	},
 }

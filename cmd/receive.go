@@ -57,7 +57,7 @@ var receiveCmd = &cobra.Command{
 					fmt.Println("Received first PING")
 				}
 
-				if currentTime-lastTime > 20 {
+				if currentTime-lastTime > 200 {
 					gapCount++
 					fmt.Printf("\nGap nr %d was: %.2fs\n", gapCount, float64(currentTime-lastTime)/1000)
 				}
